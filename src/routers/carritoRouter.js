@@ -1,21 +1,21 @@
 import { Router } from "express";
-import cartsDao from "../daos/carts/carts.daos.js";
+import carritoDao from "../daos/carts/carrito.daos.js";
 import productsDao from "../daos/products/products.daos.js";
 
 export const carritoRouter = Router();
 
-const cartsContainer = cartsDao;
-const productsContainer = productsDao;
+const carritoContainer = carritoDao;
+const productosContainer = productsDao;
 
 // Endpoints Cart
 
 carritoRouter.get("/", async (req, res) => {
-	res.json(await cartsContainer.getAll());
+	res.json(await carritoContainer.getAll());
 });
 
 carritoRouter.get("/:id", async (req, res) => {
 	const cartId = req.params.id;
-	const cart = await cartsContainer.getById(cartId);
+	const cart = await carritoContainer.getById(cartId);
 
 	if (cart) {
 		res.json(cart);
@@ -26,7 +26,7 @@ carritoRouter.get("/:id", async (req, res) => {
 
 carritoRouter.get("/:id/productos", async (req, res) => {
 	const cartId = req.params.id;
-	const cart = await cartsContainer.getById(cartId);
+	const cart = await carritoContainer.getById(cartId);
 
 	if (cart) {
 		res.json({ productos: cart.productos });
@@ -36,31 +36,31 @@ carritoRouter.get("/:id/productos", async (req, res) => {
 });
 
 carritoRouter.post("/", async (req, res) => {
-	res.json(await cartsContainer.save(req.body));
+	res.json(await carritoContainer.save(req.body));
 });
 
 carritoRouter.post("/:id/productos", async (req, res) => {
-	const cart = await cartsContainer.getById(req.params.id);
-	const product = await productsContainer.getById(req.body.id);
+	const cart = await carritoContainer.getById(req.params.id);
+	const product = await productosContainer.getById(req.body.id);
 	cart.productos.push(product);
 
-	res.json(await cartsContainer.updateById(req.params.id, cart));
+	res.json(await carritoContainer.updateById(req.params.id, cart));
 });
 
 carritoRouter.delete("/", async (req, res) => {
-	res.send(await cartsContainer.deleteAll());
+	res.send(await carritoContainer.deleteAll());
 });
 
 carritoRouter.delete("/:id", async (req, res) => {
 	const cartId = req.params.id;
-	res.send(await cartsContainer.deleteById(cartId));
+	res.send(await carritoContainer.deleteById(cartId));
 });
 
 carritoRouter.delete("/:id/productos/:id_prod", async (req, res) => {
 	const cartId = req.params.id;
 	const productId = req.params.id_prod;
 	try {
-		const cart = await cartsContainer.getById(cartId);
+		const cart = await carritoContainer.getById(cartId);
 		const isInCart = await cart.productos.some(
 			(producto) => producto._id.toString() === productId
 		);
@@ -69,7 +69,7 @@ carritoRouter.delete("/:id/productos/:id_prod", async (req, res) => {
 			cart.productos = cart.productos.filter(
 				(producto) => producto._id.toString() !== productId
 			);
-			res.json(await cartsContainer.updateById(req.params.id, cart));
+			res.json(await carritoContainer.updateById(req.params.id, cart));
 		} else {
 			throw new Error(`El producto ${productId} no esta en el carrito`);
 		}

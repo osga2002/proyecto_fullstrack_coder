@@ -3,7 +3,7 @@ import productsDao from "../daos/products/products.daos.js";
 
 export const productosRouter = Router();
 
-const productsContainer = productsDao;
+const productosContainer = productsDao;
 
 let administrador = true;
 
@@ -14,12 +14,12 @@ const authError = (req) => ({
 
 // Endpoints products
 productosRouter.get("/", async (req, res) => {
-	res.json(await productsContainer.getAll());
+	res.json(await productosContainer.getAll());
 });
 
 productosRouter.get("/:id", async (req, res) => {
 	const productId = req.params.id;
-	const product = await productsContainer.getById(productId);
+	const product = await productosContainer.getById(productId);
 	console.log("product:", product);
 	if (product) {
 		res.json(product);
@@ -30,7 +30,7 @@ productosRouter.get("/:id", async (req, res) => {
 
 productosRouter.post("/", async (req, res) => {
 	if (administrador) {
-		res.json(await productsContainer.save(req.body));
+		res.json(await productosContainer.save(req.body));
 	} else {
 		res.send(authError(req));
 	}
@@ -39,10 +39,10 @@ productosRouter.post("/", async (req, res) => {
 productosRouter.put("/:id", (req, res) => {
 	const productId = req.params.id;
 	if (administrador) {
-		productsContainer.updateById(productId, {
+		productosContainer.updateById(productId, {
 			...req.body,
 		});
-		res.send(productsContainer.getById(productId));
+		res.send(productosContainer.getById(productId));
 	} else {
 		res.send(authError(req));
 	}
@@ -51,13 +51,13 @@ productosRouter.put("/:id", (req, res) => {
 productosRouter.delete("/:id", async (req, res) => {
 	const productId = req.params.id;
 	administrador
-		? res.send(await productsContainer.deleteById(productId))
+		? res.send(await productosContainer.deleteById(productId))
 		: res.send(authError);
 });
 
 productosRouter.delete("/", async (req, res) => {
 	if (administrador) {
-		res.send(await productsContainer.deleteAll());
+		res.send(await productosContainer.deleteAll());
 	} else {
 		res.send(authError(req));
 	}
